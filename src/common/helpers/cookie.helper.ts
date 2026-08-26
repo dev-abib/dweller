@@ -6,10 +6,10 @@ export class CookieHelper {
 
     return {
       httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? 'none' : 'lax',
+      secure: true,
+      sameSite: 'none',
       path: '/',
-      domain: isProd ? '.dwellr.tech' : undefined,
+      domain: isProd ? (process.env.COOKIE_DOMAIN || '.dwellr.tech') : undefined,
     };
   }
 
@@ -22,11 +22,20 @@ export class CookieHelper {
 
     res.cookie('accessToken', accessToken, {
       ...options,
-      maxAge: 15 * 60 * 1000,
+      maxAge: 8 * 60 * 60 * 1000,
     });
 
     res.cookie('refreshToken', refreshToken, {
       ...options,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    // Also set fallback indicator cookie
+    res.cookie('admin_auth', '1', {
+      httpOnly: false,
+      secure: true,
+      sameSite: 'none',
+      path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
   }
@@ -36,5 +45,6 @@ export class CookieHelper {
 
     res.clearCookie('accessToken', options);
     res.clearCookie('refreshToken', options);
+    res.clearCookie('admin_auth', { path: '/' });
   }
 }
