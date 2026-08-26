@@ -159,14 +159,12 @@ export function newsletterBroadcastTemplate(options: {
     }
   </style>
 </head>
-    @media screen and (max-width: 640px) {
-      .email-wrap { padding: 16px 12px !important; }
-      .h1-headline { font-size: 22px !important; line-height: 28px !important; }
-    }
-  </style>
-</head>
 <body style="margin: 0; padding: 0; background-color: #ffffff; color: #111827;">
-  ${options.preheader ? `<span style="display:none;font-size:1px;color:#ffffff;max-height:0px;max-width:0px;opacity:0;overflow:hidden;">${options.preheader}</span>` : ''}
+  <!-- Hidden Preheader with Anti-Leak Padding -->
+  <div style="display: none; max-height: 0px; overflow: hidden; mso-hide: all; font-size: 1px; line-height: 1px; color: #ffffff; opacity: 0;">
+    ${options.preheader || options.subject}
+    &zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+  </div>
 
   <!-- Main Clean Canvas -->
   <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #ffffff;">
