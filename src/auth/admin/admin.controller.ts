@@ -46,7 +46,10 @@ export class AdminController {
 
     return {
       message: result.message,
-      data: result.data.admin,
+      data: {
+        ...result.data.admin,
+        tokens: result.data.tokens,
+      },
     };
   }
 
@@ -58,7 +61,10 @@ export class AdminController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const refreshToken = req.cookies?.refreshToken as string;
+    const refreshToken =
+      (req.cookies?.refreshToken as string) ||
+      (req.headers['x-refresh-token'] as string) ||
+      (req.headers.authorization?.replace('Bearer ', ''));
 
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token is required');
@@ -74,7 +80,9 @@ export class AdminController {
 
     return {
       message: result.message,
-      data: null,
+      data: {
+        tokens: result.data.tokens,
+      },
     };
   }
 
