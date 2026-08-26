@@ -26,6 +26,7 @@ import { ContactQueryModule } from './contact-query/contact-query.module';
 import { ChatModule } from './chat/chat.module';
 import { TaskManagerModule } from './task-manager/task-manager.module';
 import { PushModule } from './push/push.module';
+import { NewsletterModule } from './newsletter/newsletter.module';
 
 
 @Module({
@@ -51,6 +52,7 @@ import { PushModule } from './push/push.module';
     ChatModule,
     TaskManagerModule,
     PushModule,
+    NewsletterModule,
   ],
   controllers: [AppController, SubscriptionController],
   providers: [

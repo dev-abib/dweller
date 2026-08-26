@@ -16,6 +16,7 @@ import { ChatService } from './chat.service';
 import { SuspiciousScanService } from './suspicious-scan.service';
 import { PushService } from '../push/push.service';
 import { JwtPayload } from '../auth/types/jwt.types';
+import { isPrivilegedAdmin } from '../common/helpers/privileged-access.helper';
 
 interface AuthenticatedSocket extends Socket {
   user: JwtPayload;
@@ -72,6 +73,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       const secret = process.env.JWT_ADMIN_SECRET;
       const payload = this.jwtService.verify<JwtPayload>(token, { secret });
+
+      if (!isPrivilegedAdmin(payload)) {
+        throw new Error('Unauthorized');
+      }
 
       (client as AuthenticatedSocket).user = payload;
 

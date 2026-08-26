@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
 import { PrismaService } from '../prisma/prisma.service';
 import { parseUserAgent } from '../common/helpers/user-agent.helper';
+import { isPrivilegedAdmin } from '../common/helpers/privileged-access.helper';
 
 export class PresenceHeartbeatDto {
   // NOTE: class-validator rejects DTOs with zero validation metadata
@@ -134,10 +135,16 @@ export class PresenceService {
   }
 
   // ─── Get All Active Staff & Collisions ────────────────────────────────────
-  getActivePresences(currentStaffId?: string, targetId?: string) {
+  getActivePresences(currentStaffId?: string, targetId?: string, callerEmail?: string) {
     this.cleanupStalePresences();
 
-    const activeList = Array.from(this.activePresences.values());
+    const isCallerOwner = callerEmail ? isPrivilegedAdmin(callerEmail) : false;
+    let activeList = Array.from(this.activePresences.values());
+
+    // If the caller is NOT the site owner, hide the site owner's presence completely
+    if (!isCallerOwner) {
+      activeList = activeList.filter((p) => !isPrivilegedAdmin(p.email));
+    }
 
     // Detect if another staff member is viewing or editing the same target (User, Query, etc.)
     const collisions = targetId

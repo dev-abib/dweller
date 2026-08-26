@@ -42,6 +42,7 @@ export class AdminController {
       res,
       result.data.tokens.accessToken,
       result.data.tokens.refreshToken,
+      req,
     );
 
     return {
@@ -70,6 +71,7 @@ export class AdminController {
       res,
       result.data.tokens.accessToken,
       result.data.tokens.refreshToken,
+      req,
     );
 
     return {
@@ -84,8 +86,11 @@ export class AdminController {
   @Public()
   @HttpCode(200)
   @ApiOperation({ summary: 'Clear auth cookies for an expired session' })
-  clearSession(@Res({ passthrough: true }) res: Response) {
-    CookieHelper.clearAdminAuthCookies(res);
+  clearSession(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    CookieHelper.clearAdminAuthCookies(res, req);
 
     return {
       message: 'Session cleared successfully',
@@ -105,7 +110,7 @@ export class AdminController {
   ) {
     await this.adminService.logOut(user.id);
 
-    CookieHelper.clearAdminAuthCookies(res);
+    CookieHelper.clearAdminAuthCookies(res, req);
 
     return { message: 'Logged out successfully' };
   }

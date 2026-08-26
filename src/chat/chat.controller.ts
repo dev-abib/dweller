@@ -16,6 +16,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '../auth/guards/auth-guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { PrivilegedAdminGuard } from '../auth/guards/privileged-admin.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Auth } from '../auth/decorators/auth.decorator';
 import { ChatService } from './chat.service';
@@ -30,7 +31,7 @@ interface RequestWithUser extends Request {
 
 @ApiTags('Chat')
 @Auth('admin')
-@UseGuards(AuthGuard, RolesGuard)
+@UseGuards(AuthGuard, RolesGuard, PrivilegedAdminGuard)
 @Controller('chat')
 export class ChatController {
   constructor(

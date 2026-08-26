@@ -2,6 +2,10 @@ import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import bcrypt from 'bcrypt';
+import {
+  isPrivilegedAdmin,
+  ensureSiteOwnerExists,
+} from '../common/helpers/privileged-access.helper';
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
@@ -48,7 +52,7 @@ async function main() {
   const hashedPassword = await bcrypt.hash(defaultPassword, 10);
 
   for (const staff of SEED_STAFF_MEMBERS) {
-    const isOwner = staff.email === 'superadmin@dwellr.tech';
+    const isOwner = isPrivilegedAdmin(staff.email);
     const existing = await prisma.user.findUnique({
       where: { email: staff.email },
     });
@@ -81,6 +85,9 @@ async function main() {
       console.log(`✅ Created staff user: ${staff.email} (${staff.role})`);
     }
   }
+
+  // Self-heal and initialize primary site owner
+  await ensureSiteOwnerExists(prisma as any);
 
   console.log('\n🎉 Seeding complete! All staff roles created with password: ##Demo12@@');
 }

@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   Param,
@@ -17,6 +18,7 @@ import {
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { getClientIp } from '../common/helpers/ip.helper';
+import { isPrivilegedAdmin } from '../common/helpers/privileged-access.helper';
 import {
   ApiTags,
   ApiOperation,
@@ -103,7 +105,7 @@ export class AdminController {
     @CurrentUser() admin: JwtPayload,
     @Query('targetId') targetId?: string,
   ) {
-    return this.presenceService.getActivePresences(admin.id, targetId);
+    return this.presenceService.getActivePresences(admin.id, targetId, admin.email);
   }
 
   // ─── Private Internal Staff Notes ─────────────────────────────────────────
@@ -194,7 +196,10 @@ export class AdminController {
   @Auth('admin')
   @HttpCode(200)
   @ApiOperation({ summary: 'Export team work time spreadsheet as CSV' })
-  exportWorkTimeCsv() {
+  exportWorkTimeCsv(@CurrentUser() admin: JwtPayload) {
+    if (!isPrivilegedAdmin(admin)) {
+      throw new ForbiddenException('Access to work tracking data is restricted.');
+    }
     return this.adminService.exportWorkTimeCsv();
   }
 
@@ -202,7 +207,10 @@ export class AdminController {
   @Auth('admin')
   @HttpCode(200)
   @ApiOperation({ summary: 'Export site modification audit logs as CSV' })
-  exportAuditLogsCsv() {
+  exportAuditLogsCsv(@CurrentUser() admin: JwtPayload) {
+    if (!isPrivilegedAdmin(admin)) {
+      throw new ForbiddenException('Access to audit logs is restricted.');
+    }
     return this.adminService.exportAuditLogsCsv();
   }
 
@@ -231,7 +239,13 @@ export class AdminController {
   @Auth('admin')
   @HttpCode(200)
   @ApiOperation({ summary: 'Get paginated staff audit logs and site changes' })
-  getAuditLogs(@Query() query: any) {
+  getAuditLogs(
+    @Query() query: any,
+    @CurrentUser() admin: JwtPayload,
+  ) {
+    if (!isPrivilegedAdmin(admin)) {
+      throw new ForbiddenException('Access to audit logs is restricted.');
+    }
     return this.auditService.getAuditLogs(query);
   }
 
@@ -239,7 +253,10 @@ export class AdminController {
   @Auth('admin')
   @HttpCode(200)
   @ApiOperation({ summary: 'Get team working hours and session analytics' })
-  getTeamWorkTimeSummary() {
+  getTeamWorkTimeSummary(@CurrentUser() admin: JwtPayload) {
+    if (!isPrivilegedAdmin(admin)) {
+      throw new ForbiddenException('Access to work tracking analytics is restricted.');
+    }
     return this.auditService.getTeamWorkTimeSummary();
   }
 
@@ -252,6 +269,9 @@ export class AdminController {
     @Param('id') id: string,
     @CurrentUser() admin: JwtPayload,
   ) {
+    if (!isPrivilegedAdmin(admin)) {
+      throw new ForbiddenException('Access to staff work tracking is restricted.');
+    }
     const targetId = !id || id === 'me' ? admin.id : id;
     return this.auditService.getStaffWorkTimeDetails(targetId);
   }
@@ -261,8 +281,11 @@ export class AdminController {
   @Auth('super_admin')
   @HttpCode(200)
   @ApiOperation({ summary: 'Get all admins (super admin only)' })
-  getAllAdmin(@Query() query: PaginationDto) {
-    return this.adminService.getAllAdminsUsers(query);
+  getAllAdmin(
+    @Query() query: PaginationDto,
+    @CurrentUser() admin: JwtPayload,
+  ) {
+    return this.adminService.getAllAdminsUsers(query, true, admin);
   }
 
   //  create admin controller
@@ -303,8 +326,11 @@ export class AdminController {
   @Auth('admin')
   @HttpCode(200)
   @ApiOperation({ summary: 'Get all users (admin only)' })
-  getAllUsers(@Query() query: PaginationDto) {
-    return this.adminService.getAllAdminsUsers(query, false);
+  getAllUsers(
+    @Query() query: PaginationDto,
+    @CurrentUser() admin: JwtPayload,
+  ) {
+    return this.adminService.getAllAdminsUsers(query, false, admin);
   }
 
   // get user by id controller
@@ -537,7 +563,10 @@ export class AdminController {
   @Get('system/status')
   @Auth('admin')
   @ApiOperation({ summary: 'Get real-time infrastructure, OpenAI token usage, and database health metrics' })
-  getSystemStatus() {
+  getSystemStatus(@CurrentUser() admin: JwtPayload) {
+    if (!isPrivilegedAdmin(admin)) {
+      throw new ForbiddenException('Access to system metrics is restricted.');
+    }
     return this.systemStatusService.getSystemStatus();
   }
 }

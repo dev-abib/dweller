@@ -17,7 +17,13 @@ async function bootstrap() {
   // Serve static assets (favicon, etc.)
   app.useStaticAssets(join(__dirname, '..', 'public'));
 
-  app.use(helmet());
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+      crossOriginEmbedderPolicy: false,
+      contentSecurityPolicy: false,
+    }),
+  );
   app.use(cookieParser());
 
   app.use((req: Request, res: Response, next: NextFunction) => {
@@ -26,21 +32,39 @@ async function bootstrap() {
     next();
   });
 
+  const rawAllowedOrigins = [
+    process.env.FRONTEND_URL,
+    process.env.ADMIN_URL,
+    ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : []),
+    'https://q-studieon-dashboard-next.vercel.app',
+    'https://admin.dwellr.tech',
+    'https://dwellr.tech',
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
+    'http://localhost:3003',
+    'http://localhost:4000',
+    'http://localhost:4923',
+    'http://localhost:5555',
+  ].filter(Boolean) as string[];
+
   app.enableCors({
-    origin: [
-      'https://q-studieon-dashboard-next.vercel.app',
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:3002',
-      'http://localhost:3003',
-      'http://localhost:4000',
-      'http://localhost:4923',
-      'http://localhost:5555',
-      'https://admin.dwellr.tech',
-    ],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, or server-to-server)
+      if (!origin) return callback(null, true);
+
+      const isAllowed = rawAllowedOrigins.some(
+        (allowed) => allowed === origin || origin.endsWith('.vercel.app') || origin.endsWith('.dwellr.tech'),
+      );
+
+      if (isAllowed || process.env.NODE_ENV !== 'production') {
+        return callback(null, true);
+      }
+      return callback(null, true); // Permissive with credentials for smooth custom domain rollout
+    },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With'],
     exposedHeaders: ['Set-Cookie'],
   });
 

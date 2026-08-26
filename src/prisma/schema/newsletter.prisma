@@ -1,0 +1,43 @@
+model NewsletterSubscriber {
+  id              String             @id @default(cuid())
+  email           String             @unique
+  name            String?
+  source          String?            @default("website_footer")
+  status          NewsletterStatus   @default(SUBSCRIBED)
+  tags            String[]           @default([])
+  subscribedAt    DateTime           @default(now())
+  unsubscribedAt  DateTime?
+  lastBroadcastAt DateTime?
+  ipAddress       String?
+  userAgent       String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model NewsletterBroadcast {
+  id              String            @id @default(cuid())
+  subject         String
+  content         String
+  preheader       String?
+  senderName      String?
+  senderEmail     String?
+  sentById        String?
+  sentByName      String?
+  recipientCount  Int               @default(0)
+  deliveredCount  Int               @default(0)
+  failedCount     Int               @default(0)
+  sentAt          DateTime          @default(now())
+  createdAt       DateTime          @default(now())
+
+  @@index([sentAt])
+}
+
+enum NewsletterStatus {
+  SUBSCRIBED
+  UNSUBSCRIBED
+  BOUNCED
+}

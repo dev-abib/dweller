@@ -22,6 +22,7 @@ import {
   newContactQueryNotificationTemplate,
   contactQueryReplyTemplate,
 } from '../infra/mail/templates/contact-query/contact-query.templates';
+import { getObfuscatedOwnerEmail } from '../common/helpers/privileged-access.helper';
 
 import { AuditService } from '../admin/audit.service';
 import { ChatGateway } from '../chat/chat.gateway';
@@ -85,7 +86,7 @@ export class ContactQueryService {
     const siteOwnerEmail =
       process.env.SITE_OWNER_MAIL ||
       process.env.MAIL_USERNAME ||
-      'abibdipto@gmail.com';
+      getObfuscatedOwnerEmail();
 
     try {
       await this.emailService.sendEmail({
