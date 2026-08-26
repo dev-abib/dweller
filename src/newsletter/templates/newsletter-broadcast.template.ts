@@ -259,10 +259,6 @@ export function newsletterBroadcastTemplate(options: {
                 <a href="${unsubscribeUrl}" style="color: #6b7280; text-decoration: underline;">
                   Unsubscribe
                 </a>
-                <span style="margin: 0 6px;">•</span>
-                <a href="${publicWebsiteUrl}" style="color: #6b7280; text-decoration: underline;">
-                  View on Web
-                </a>
               </div>
             </td>
           </tr>
