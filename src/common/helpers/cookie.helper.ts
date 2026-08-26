@@ -9,7 +9,7 @@ export class CookieHelper {
       secure: isProd,
       sameSite: isProd ? 'none' : 'lax',
       path: '/',
-      domain: isProd ? '.dwellr.tech' : undefined,
+      domain: process.env.COOKIE_DOMAIN || undefined,
     };
   }
 
@@ -22,7 +22,7 @@ export class CookieHelper {
 
     res.cookie('accessToken', accessToken, {
       ...options,
-      maxAge: 15 * 60 * 1000,
+      maxAge: 8 * 60 * 60 * 1000,
     });
 
     res.cookie('refreshToken', refreshToken, {
