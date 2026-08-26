@@ -12,8 +12,14 @@ export function newsletterBroadcastTemplate(options: {
   const siteDescription =
     process.env.SITE_DESCRIPTION ||
     'Weekly perspectives on data-driven strategy, tech innovation, and market intelligence.';
-  const frontendUrl = process.env.FRONTEND_URL || 'https://dwellr.tech';
-  const unsubscribeUrl = `${frontendUrl}/newsletter/unsubscribe?email=${encodeURIComponent(options.recipientEmail)}`;
+  const publicWebsiteUrl =
+    process.env.PUBLIC_WEBSITE_URL ||
+    process.env.PUBLIC_URL ||
+    process.env.WEBSITE_URL ||
+    'https://dwellr.tech';
+  const apiUrl =
+    process.env.API_URL || `${publicWebsiteUrl}/api/v1`;
+  const unsubscribeUrl = `${apiUrl}/newsletter/unsubscribe?email=${encodeURIComponent(options.recipientEmail)}`;
 
   const fontKey = (options.fontFamily || 'inter').toLowerCase();
   let fontImportUrl = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap';
@@ -254,7 +260,7 @@ export function newsletterBroadcastTemplate(options: {
                   Unsubscribe
                 </a>
                 <span style="margin: 0 6px;">•</span>
-                <a href="${frontendUrl}" style="color: #6b7280; text-decoration: underline;">
+                <a href="${publicWebsiteUrl}" style="color: #6b7280; text-decoration: underline;">
                   View on Web
                 </a>
               </div>

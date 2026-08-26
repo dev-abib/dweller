@@ -1,7 +1,13 @@
 export function newsletterWelcomeTemplate(email: string, name?: string): string {
   const siteName = process.env.SITE_NAME || 'Dwellr';
-  const frontendUrl = process.env.FRONTEND_URL || 'https://dwellr.tech';
-  const unsubscribeUrl = `${frontendUrl}/newsletter/unsubscribe?email=${encodeURIComponent(email)}`;
+  const publicWebsiteUrl =
+    process.env.PUBLIC_WEBSITE_URL ||
+    process.env.PUBLIC_URL ||
+    process.env.WEBSITE_URL ||
+    'https://dwellr.tech';
+  const apiUrl =
+    process.env.API_URL || `${publicWebsiteUrl}/api/v1`;
+  const unsubscribeUrl = `${apiUrl}/newsletter/unsubscribe?email=${encodeURIComponent(email)}`;
   const currentDate = new Date().toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
@@ -108,7 +114,7 @@ export function newsletterWelcomeTemplate(email: string, name?: string): string 
 
               <!-- Explore CTA Button -->
               <div style="text-align: center; margin: 32px 0 12px 0;">
-                <a href="${frontendUrl}" style="display: inline-block; background-color: #0f172a; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 10px; font-size: 14px; font-weight: 700; letter-spacing: 0.2px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);">
+                <a href="${publicWebsiteUrl}" style="display: inline-block; background-color: #0f172a; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 10px; font-size: 14px; font-weight: 700; letter-spacing: 0.2px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);">
                   Explore ${siteName} Now →
                 </a>
               </div>
