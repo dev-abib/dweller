@@ -10,14 +10,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBearerAuth,
-  ApiParam,
-  ApiConsumes,
-  ApiBody,
-} from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { Auth } from '../auth/decorators/auth.decorator';
 import { Public } from '../auth/decorators/public.decorator';
 import { InsightService } from './insight.service';
@@ -27,6 +20,13 @@ import { GetAllInsightsDto } from './dto/get-all-insights.dto';
 import { createFileUploadInterceptor } from '../common/interceptors/file-upload.interceptor';
 import { FileValidationPipe } from '../common/pipes/file-validation.pipe';
 import type { MulterFile } from '../common/pipes/file-validation.pipe';
+import {
+  ApiCreateInsight,
+  ApiGetAllInsights,
+  ApiGetInsightById,
+  ApiUpdateInsight,
+  ApiDeleteInsight,
+} from './swagger/insight.swagger';
 
 @ApiTags('Insight')
 @Controller('insight')
@@ -35,36 +35,8 @@ export class InsightController {
 
   @Post('create')
   @Auth('admin')
-  @ApiBearerAuth()
+  @ApiCreateInsight()
   @UseInterceptors(createFileUploadInterceptor({ fieldName: 'icon' }))
-  @ApiOperation({
-    summary: 'Create a new insight (multipart: text fields + optional icon file)',
-  })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'Insight creation payload',
-    required: true,
-    schema: {
-      type: 'object',
-      properties: {
-        title: { type: 'string', example: 'Property Insights' },
-        subTitle: { type: 'string', example: 'Understand your property value' },
-        description: {
-          type: 'string',
-          example: 'Get detailed analysis of your property...',
-        },
-        redirectLink: {
-          type: 'string',
-          example: '/properties/analysis',
-        },
-        icon: {
-          type: 'string',
-          format: 'binary',
-          description: 'Insight icon image',
-        },
-      },
-    },
-  })
   createInsight(
     @UploadedFile(new FileValidationPipe({ required: false }))
     file: MulterFile | undefined,
@@ -75,51 +47,22 @@ export class InsightController {
 
   @Get('get-all')
   @Public()
-  @ApiOperation({ summary: 'Get all insights with pagination' })
+  @ApiGetAllInsights()
   getAllInsights(@Query() dto: GetAllInsightsDto) {
     return this.insightService.getAllInsights(dto);
   }
 
   @Get(':id')
   @Public()
-  @ApiOperation({ summary: 'Get an insight by ID' })
-  @ApiParam({ name: 'id', description: 'Insight ID' })
+  @ApiGetInsightById()
   getInsightById(@Param('id') id: string) {
     return this.insightService.getInsightById(id);
   }
 
   @Put(':id')
   @Auth('admin')
-  @ApiBearerAuth()
+  @ApiUpdateInsight()
   @UseInterceptors(createFileUploadInterceptor({ fieldName: 'icon' }))
-  @ApiOperation({
-    summary: 'Update an insight (multipart: optional text fields + optional icon file)',
-  })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'Insight update payload',
-    required: true,
-    schema: {
-      type: 'object',
-      properties: {
-        title: { type: 'string', example: 'Property Insights' },
-        subTitle: { type: 'string', example: 'Understand your property value' },
-        description: {
-          type: 'string',
-          example: 'Get detailed analysis of your property...',
-        },
-        redirectLink: {
-          type: 'string',
-          example: '/properties/analysis',
-        },
-        icon: {
-          type: 'string',
-          format: 'binary',
-          description: 'Insight icon image',
-        },
-      },
-    },
-  })
   updateInsight(
     @Param('id') id: string,
     @UploadedFile(new FileValidationPipe({ required: false }))
@@ -131,9 +74,7 @@ export class InsightController {
 
   @Delete(':id')
   @Auth('admin')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete an insight by ID' })
-  @ApiParam({ name: 'id', description: 'Insight ID' })
+  @ApiDeleteInsight()
   deleteInsight(@Param('id') id: string) {
     return this.insightService.deleteInsight(id);
   }

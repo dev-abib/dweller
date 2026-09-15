@@ -9,13 +9,7 @@ import {
   UploadedFile,
   BadRequestException,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBearerAuth,
-  ApiConsumes,
-  ApiBody,
-} from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Auth } from '../auth/decorators/auth.decorator';
@@ -28,6 +22,11 @@ import {
   type MulterFile,
 } from '../common/pipes/file-validation.pipe';
 import { DeleteAccountDto } from './dto/delete-account.dto';
+import {
+  ApiGetMe,
+  ApiUpdateUser,
+  ApiDeleteUser,
+} from './swagger/user.swagger';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -39,7 +38,7 @@ export class UserController {
   @Get('get-me')
   @HttpCode(200)
   @Auth('user')
-  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiGetMe()
   getMe(@CurrentUser() user: JwtPayload) {
     return this.user.getMe(user.id);
   }
@@ -49,39 +48,7 @@ export class UserController {
   @HttpCode(200)
   @Auth('user')
   @NoGuest()
-  @ApiOperation({
-    summary: 'Update user profile with optional profile picture',
-  })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'User profile update payload',
-    schema: {
-      type: 'object',
-      properties: {
-        name: {
-          type: 'string',
-          example: 'John Doe',
-          description: 'User display name (min 4 chars)',
-        },
-        email: {
-          type: 'string',
-          example: 'newemail@example.com',
-          description: 'User email address',
-        },
-        userRole: {
-          type: 'string',
-          example: 'buyer',
-          description:
-            'User role: buyer, seller, renter, real_estate_agent, brokerage, practitioner, home_explorer, homeowner, investor, interior_designer, architect',
-        },
-        profilePicture: {
-          type: 'string',
-          format: 'binary',
-          description: 'Profile picture image (JPEG, PNG, WebP, max 5MB)',
-        },
-      },
-    },
-  })
+  @ApiUpdateUser()
   @UseInterceptors(createFileUploadInterceptor({ fieldName: 'profilePicture' }))
   updateUser(
     @Body() dto: UpdateUserDto,
@@ -105,7 +72,7 @@ export class UserController {
   @HttpCode(204)
   @Auth('user')
   @NoGuest()
-  @ApiOperation({ summary: 'Delete user account' })
+  @ApiDeleteUser()
   deleteUser(@Body() dto: DeleteAccountDto, @CurrentUser() user: JwtPayload) {
     return this.user.deleteUser(dto, user.id);
   }

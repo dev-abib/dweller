@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { getClientIp } from '../../common/helpers/ip.helper';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Public } from '../decorators/public.decorator';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
@@ -22,6 +22,10 @@ import type { JwtPayload } from '../types/jwt.types';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { UserService } from './user.service';
+import {
+  ApiGoogleLogin,
+  ApiAppleLogin,
+} from './swagger/auth.swagger';
 
 @ApiTags('Auth - User')
 @Controller('auth/user')
@@ -135,29 +139,7 @@ export class UserController {
   @Post('google-login')
   @HttpCode(200)
   @Public()
-  @ApiOperation({
-    summary: 'Login with Google OAuth (optionally convert guest account)',
-  })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        token: {
-          type: 'string',
-          description:
-            'Google OAuth access token obtained from the Google OAuth frontend flow',
-          example: 'ya29.a0AeO...',
-        },
-        guestId: {
-          type: 'string',
-          description:
-            'Guest ID to convert a guest session into a permanent Google account',
-          example: 'guest_abc123',
-        },
-      },
-      required: ['token'],
-    },
-  })
+  @ApiGoogleLogin()
   googleLogin(
     @Body('token') token: string,
     @Body('guestId') guestId: string | undefined,
@@ -173,29 +155,7 @@ export class UserController {
   @Post('apple-login')
   @HttpCode(200)
   @Public()
-  @ApiOperation({
-    summary: 'Login with Apple OAuth (optionally convert guest account)',
-  })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        token: {
-          type: 'string',
-          description:
-            'Apple identity token obtained from the Apple Sign-In frontend flow',
-          example: 'eyJraWQiOi...',
-        },
-        guestId: {
-          type: 'string',
-          description:
-            'Guest ID to convert a guest session into a permanent Apple account',
-          example: 'guest_abc123',
-        },
-      },
-      required: ['token'],
-    },
-  })
+  @ApiAppleLogin()
   appleLogin(
     @Body('token') token: string,
     @Body('guestId') guestId: string | undefined,

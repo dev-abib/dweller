@@ -209,10 +209,7 @@ export class OnsiteReportService {
     });
 
     const placeId = placeDetails?.[0]?.place_id ?? null;
-    const googlePhotos = [
-      placeDetails?.[0]?.photos?.[0],
-      placeDetails?.[0]?.photos?.[1],
-    ].filter(Boolean);
+    const googlePhotos = (placeDetails?.[0]?.photos ?? []).slice(0, 3);
 
     // ── AI generation ────────────────────────────────────────────────────────
 

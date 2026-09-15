@@ -48,10 +48,7 @@ export class ReportService {
 
       const photosDetails = {
         placeId: placeDetails?.[0]?.place_id ?? null,
-        photos: [
-          placeDetails?.[0]?.photos?.[0],
-          placeDetails?.[0]?.photos?.[1],
-        ].filter(Boolean),
+        photos: (placeDetails?.[0]?.photos ?? []).slice(0, 3),
       };
 
       const numerologyDetails = this.numerologyHelpers.createReport(dto);

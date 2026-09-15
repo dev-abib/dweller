@@ -10,14 +10,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiBearerAuth,
-  ApiParam,
-  ApiConsumes,
-  ApiBody,
-} from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { Auth } from '../auth/decorators/auth.decorator';
 import { Public } from '../auth/decorators/public.decorator';
 import { CategoryService } from './category.service';
@@ -27,6 +20,13 @@ import { GetAllCategoriesDto } from './dto/get-all-categories.dto';
 import { createFileUploadInterceptor } from '../common/interceptors/file-upload.interceptor';
 import { FileValidationPipe } from '../common/pipes/file-validation.pipe';
 import type { MulterFile } from '../common/pipes/file-validation.pipe';
+import {
+  ApiCreateCategory,
+  ApiGetAllCategories,
+  ApiGetCategoryById,
+  ApiUpdateCategory,
+  ApiDeleteCategory,
+} from './swagger/category.swagger';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -36,27 +36,8 @@ export class CategoryController {
   // create category controller
   @Post('create-category')
   @Auth('admin')
-  @ApiBearerAuth()
+  @ApiCreateCategory()
   @UseInterceptors(createFileUploadInterceptor({ fieldName: 'icon' }))
-  @ApiOperation({
-    summary: 'Create a new category (multipart: name + optional icon file)',
-  })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'Category creation payload',
-    required: true,
-    schema: {
-      type: 'object',
-      properties: {
-        name: { type: 'string', example: 'Favorite Color' },
-        icon: {
-          type: 'string',
-          format: 'binary',
-          description: 'Category icon image',
-        },
-      },
-    },
-  })
   createCategory(
     @UploadedFile(new FileValidationPipe({ required: false }))
     file: MulterFile | undefined,
@@ -68,7 +49,7 @@ export class CategoryController {
   // get all categories controller
   @Get('get-all-categories')
   @Public()
-  @ApiOperation({ summary: 'Get all categories with pagination' })
+  @ApiGetAllCategories()
   getAllCategories(@Query() dto: GetAllCategoriesDto) {
     return this.categoryService.getAllCategories(dto);
   }
@@ -76,9 +57,7 @@ export class CategoryController {
   // get category by ID controller
   @Get(':id')
   @Auth('admin')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get a category by ID' })
-  @ApiParam({ name: 'id', description: 'Category ID' })
+  @ApiGetCategoryById()
   getCategoryById(@Param('id') id: string) {
     return this.categoryService.getCategoryById(id);
   }
@@ -86,28 +65,8 @@ export class CategoryController {
   // update category by ID controller
   @Put(':id')
   @Auth('admin')
-  @ApiBearerAuth()
+  @ApiUpdateCategory()
   @UseInterceptors(createFileUploadInterceptor({ fieldName: 'icon' }))
-  @ApiOperation({
-    summary:
-      'Update a category (multipart: optional name + optional icon file)',
-  })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    description: 'Category update payload',
-    required: true,
-    schema: {
-      type: 'object',
-      properties: {
-        name: { type: 'string', example: 'Favorite Color' },
-        icon: {
-          type: 'string',
-          format: 'binary',
-          description: 'Category icon image',
-        },
-      },
-    },
-  })
   updateCategoryById(
     @Param('id') id: string,
     @UploadedFile(new FileValidationPipe({ required: false }))
@@ -120,9 +79,7 @@ export class CategoryController {
   // delete category by ID controller
   @Delete(':id')
   @Auth('admin')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete a category by ID' })
-  @ApiParam({ name: 'id', description: 'Category ID' })
+  @ApiDeleteCategory()
   deleteCategoryById(@Param('id') id: string) {
     return this.categoryService.deleteCategoryById(id);
   }
