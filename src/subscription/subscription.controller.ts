@@ -10,7 +10,7 @@ import {
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { SubscriptionService } from './subscription.service';
 import type { JwtPayload } from '../auth/types/jwt.types';
-import { SubscriptionDto } from './dto/subscreption.dto';
+import { SubscriptionDto } from './dto/subscription.dto';
 import { NoGuest } from '../auth/decorators/no-guest.decorator';
 import { Auth } from '../auth/decorators/auth.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -22,7 +22,6 @@ import { RawResponse } from '../common/decorators/raw-response.decorator';
 export class SubscriptionController {
   constructor(private readonly subscriptionService: SubscriptionService) {}
 
-  // checkout controller
   @Post('checkout')
   @NoGuest()
   @Auth('user')
@@ -35,7 +34,6 @@ export class SubscriptionController {
     return this.subscriptionService.crateCheckoutSession(user.id, body);
   }
 
-  // cancel subscription controller
   @Delete('cancel')
   @NoGuest()
   @Auth('user')
@@ -45,7 +43,6 @@ export class SubscriptionController {
     return this.subscriptionService.cancelSubscription(user.id);
   }
 
-  // reactivate subscription controller
   @Post('reactivate')
   @NoGuest()
   @Auth('user')

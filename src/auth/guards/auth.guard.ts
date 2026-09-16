@@ -1,4 +1,3 @@
-// src/guards/auth.guard.ts
 import {
   CanActivate,
   ExecutionContext,
@@ -11,7 +10,7 @@ import type { Request } from 'express';
 import { AUTH_TYPE_KEY } from '../decorators/auth.decorator';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { NO_GUEST_KEY } from '../decorators/no-guest.decorator';
-import { JwtPayload } from './../types/jwt.types';
+import { JwtPayload } from '../types/jwt.types';
 import { PrismaService } from '../../prisma/prisma.service';
 
 type AuthType =
@@ -45,8 +44,6 @@ export class AuthGuard implements CanActivate {
     const authType: AuthType = this.isAuthType(rawType) ? rawType : 'user';
 
     const request = context.switchToHttp().getRequest<Request>();
-
-    // ←←← UPDATED: Support both Header and Cookie
     const token = this.extractToken(request);
 
     if (!token) {
@@ -66,10 +63,6 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('Malformed token payload');
     }
 
-    // ── Guest server-side expiry check ────────────────────────────────
-    // JWT expiry alone is not enough: the cron soft-blocks guests by
-    // flipping isGuest → false in the DB. We do one lightweight DB read
-    // only for guest tokens to enforce that block immediately.
     if (decoded.isGuest === true) {
       const guestRecord = await this.prisma.user.findUnique({
         where: { id: decoded.id },
@@ -88,7 +81,6 @@ export class AuthGuard implements CanActivate {
         );
       }
     }
-    // ─────────────────────────────────────────────────────────────────
 
     const noGuest: boolean = this.reflector.getAllAndOverride(NO_GUEST_KEY, [
       context.getHandler(),
@@ -99,7 +91,6 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('Guests cannot access this route');
     }
 
-    // Role checks
     const staffRoles = [
       'admin',
       'super_admin',

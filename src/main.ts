@@ -5,7 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import helmet from 'helmet';
-import { setupSwagger } from './common/swagger/swagger.setup';
+import { setupSwagger } from './common/swagger';
 import { join } from 'path';
 import type { Request, Response, NextFunction } from 'express';
 

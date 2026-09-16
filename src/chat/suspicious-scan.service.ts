@@ -1,4 +1,3 @@
-// src/chat/suspicious-scan.service.ts
 import { Injectable } from '@nestjs/common';
 import { SecurityAlertService } from '../admin/security-alert.service';
 

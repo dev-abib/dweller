@@ -5,7 +5,7 @@ import {
 } from 'class-validator';
 
 export function AtLeastOneField(
-  extraValues?: () => unknown[], // ← for file fields
+  extraValues?: () => unknown[],
   validationOptions?: ValidationOptions,
 ) {
   return function (object: object, propertyName: string) {

@@ -1,5 +1,3 @@
-// src/infra/emails/templates/base.template.ts
-
 import { BaseEmailProps } from './template.type';
 
 export const baseTemplate = ({ title, content }: BaseEmailProps): string => {

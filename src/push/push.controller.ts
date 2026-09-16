@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { AuthGuard } from '../auth/guards/auth-guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Auth } from '../auth/decorators/auth.decorator';
 import { Public } from '../auth/decorators/public.decorator';
@@ -26,7 +26,6 @@ interface RequestWithUser extends Request {
 export class PushController {
   constructor(private readonly pushService: PushService) {}
 
-  // Get VAPID public key for Web Push client subscription
   @Get('vapid-public-key')
   @Public()
   @ApiOperation({ summary: 'Get VAPID public key for Web Push subscription' })
@@ -36,7 +35,6 @@ export class PushController {
     };
   }
 
-  // Register this browser/device for OS push notifications
   @Post('subscribe')
   @Auth('admin')
   @UseGuards(AuthGuard, RolesGuard)
@@ -52,7 +50,6 @@ export class PushController {
     );
   }
 
-  // Remove a device from OS push notifications
   @Delete('subscribe')
   @ApiOperation({ summary: 'Unregister a device from OS push notifications' })
   unsubscribe(@Req() req: RequestWithUser, @Body() body: { endpoint: string }) {

@@ -39,7 +39,7 @@ import {
   type MulterFile,
 } from '../common/pipes/file-validation.pipe';
 import { UserService } from '../user/user.service';
-import { AdminMailDto } from '../auth/dto/admin.mail.dto';
+import { AdminMailDto } from '../auth/dto/admin-mail.dto';
 import { Public } from '../auth/decorators/public.decorator';
 import { InviteAdminDto } from './dto/invite-admin.dto';
 import { AcceptInviteDto } from './dto/accept-invite.dto';

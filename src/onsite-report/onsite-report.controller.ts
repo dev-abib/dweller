@@ -15,14 +15,14 @@ import { OnsiteReportService } from './onsite-report.service';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import type { JwtPayload } from '../auth/types/jwt.types';
 import { Auth } from '../auth/decorators/auth.decorator';
-import { SubmitOnsiteReportDto } from './helpers/dto/submit-report.dto';
+import { SubmitOnsiteReportDto } from './dto/submit-report.dto';
 import type { MulterFile } from '../common/pipes/file-validation.pipe';
 import {
   ApiSubmitOnsiteReport,
   ApiGetMyOnsiteReports,
   ApiDeleteOnsiteReport,
   ApiGetOnsiteReport,
-} from './swagger/onsite-report.swagger';
+} from '../common/swagger/modules/onsite-report.swagger';
 
 @ApiTags('Onsite Report')
 @ApiBearerAuth()

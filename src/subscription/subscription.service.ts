@@ -8,7 +8,7 @@ import { bilingCycle, subscriptionStatus } from '@prisma/client';
 import { UserRepository } from '../common/repositories/user.repository';
 import { PrismaService } from '../prisma/prisma.service';
 import Stripe from 'stripe';
-import { SubscriptionDto, PlanType } from './dto/subscreption.dto';
+import { SubscriptionDto, PlanType } from './dto/subscription.dto';
 
 type RawStripeObject = Record<string, unknown>;
 

@@ -1,5 +1,3 @@
-// src/common/helpers/user-agent.helper.ts
-
 export interface ParsedUserAgent {
   browser: string;
   os: string;

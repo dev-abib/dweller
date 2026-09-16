@@ -1,4 +1,3 @@
-// src/chat/chat.service.ts
 import {
   Injectable,
   ForbiddenException,

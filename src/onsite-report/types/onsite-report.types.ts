@@ -1,5 +1,5 @@
 import { Prisma, Report } from '@prisma/client';
-import { CaptureType } from '../helpers/dto/add.capture.dto';
+import { CaptureType } from '../dto/add-capture.dto';
 
 // ── Capture ───────────────────────────────────────────────────────────────────
 

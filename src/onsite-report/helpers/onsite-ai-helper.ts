@@ -8,7 +8,7 @@ import {
   BackendPayload,
 } from '../../auth/helpers/ai-helper';
 import { OnsiteCaptureData } from '../types/onsite-report.types';
-import { CaptureType } from './dto/add.capture.dto';
+import { CaptureType } from '../dto/add-capture.dto';
 
 // ---------------------------------------------------------------------------
 // Input

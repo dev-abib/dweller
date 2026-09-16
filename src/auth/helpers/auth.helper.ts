@@ -1,4 +1,3 @@
-// src/common/repositories/user.repository.ts
 import { BadRequestException, Injectable } from '@nestjs/common';
 import bcrypt from 'bcrypt';
 import { JwtPayload } from '../types/jwt.types';

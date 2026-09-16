@@ -6,7 +6,7 @@ import {
   IsEnum,
 } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { AtLeastOneField } from '../../auth/decorators/at-least-one-filed.dto';
+import { AtLeastOneField } from '../../common/decorators/at-least-one-field.decorator';
 import { userRole } from '@prisma/client';
 
 export class UpdateUserDto {

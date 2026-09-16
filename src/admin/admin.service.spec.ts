@@ -6,6 +6,7 @@ import { UserRepository } from '../common/repositories/user.repository';
 import { AuthHelper } from '../auth/helpers/auth.helper';
 import { CloudinaryService } from '../common/services/cloudinary.service';
 import { EmailService } from '../infra/mail/mail.service';
+import { AuditService } from './audit.service';
 
 // Mock Stripe so AdminService constructor doesn't need a real API key
 jest.mock('stripe', () => {
@@ -62,6 +63,10 @@ describe('AdminService', () => {
         {
           provide: JwtService,
           useValue: { sign: jest.fn(), verify: jest.fn() },
+        },
+        {
+          provide: AuditService,
+          useValue: { logAction: jest.fn(), queryLogs: jest.fn() },
         },
       ],
     }).compile();

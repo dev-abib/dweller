@@ -1,13 +1,9 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
 import { AuthHelper } from '../auth/helpers/auth.helper';
-import { UserRepository } from '../common/repositories/user.repository';
-import { PrismaService } from '../prisma/prisma.service';
-import { JwtModule } from '@nestjs/jwt';
-import { CloudinaryService } from '../common/services/cloudinary.service';
-import { UserService } from '../user/user.service';
-
+import { UserModule } from '../user/user.module';
 import { AuditService } from './audit.service';
 import { PresenceService } from './presence.service';
 import { SecurityAlertService } from './security-alert.service';
@@ -15,7 +11,7 @@ import { InternalNotesService } from './internal-notes.service';
 import { SystemStatusService } from './system-status.service';
 
 @Module({
-  imports: [JwtModule.register({})],
+  imports: [JwtModule.register({}), UserModule],
   controllers: [AdminController],
   providers: [
     AdminService,
@@ -25,10 +21,6 @@ import { SystemStatusService } from './system-status.service';
     InternalNotesService,
     SystemStatusService,
     AuthHelper,
-    PrismaService,
-    UserRepository,
-    CloudinaryService,
-    UserService,
   ],
   exports: [
     AuditService,

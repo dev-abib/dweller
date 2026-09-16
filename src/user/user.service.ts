@@ -47,7 +47,6 @@ export class UserService {
     }
   }
 
-  // get me service
   async getMe(id: string, currentAdmin?: JwtPayload) {
     if (currentAdmin) {
       await this.checkCanViewUserDetails(currentAdmin);
@@ -286,7 +285,6 @@ export class UserService {
     };
   }
 
-  // update user service
   async updateUser(dto: UpdateUserDto, id: string, profilePicture: MulterFile) {
     const user = await this.userRepo.findUser('id', id);
 
@@ -336,7 +334,6 @@ export class UserService {
     };
   }
 
-  // delete user service
   async deleteUser(dto: DeleteAccountDto, id: string) {
     const user = await this.userRepo.findUser('id', id);
 

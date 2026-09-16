@@ -1,5 +1,3 @@
-// src/infra/emails/email.types.ts
-
 export interface BaseEmailProps {
   title: string;
   content: string;

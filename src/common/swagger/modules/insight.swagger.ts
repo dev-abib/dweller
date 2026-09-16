@@ -10,20 +10,23 @@ import {
 const INSIGHT_SCHEMA = {
   type: 'object',
   properties: {
-    title: { type: 'string', example: 'Property Insights' },
-    subTitle: { type: 'string', example: 'Understand your property value' },
+    title: {
+      type: 'string',
+      example: 'Understanding Home Inspection Reports',
+    },
     description: {
       type: 'string',
-      example: 'Get detailed analysis of your property...',
+      example: 'A comprehensive guide to reading and understanding...',
     },
-    redirectLink: {
-      type: 'string',
-      example: '/properties/analysis',
+    sortOrder: {
+      type: 'number',
+      example: 1,
+      description: 'Display order (lower numbers appear first)',
     },
-    icon: {
+    image: {
       type: 'string',
       format: 'binary',
-      description: 'Insight icon image',
+      description: 'Insight image',
     },
   },
 };
@@ -33,13 +36,16 @@ export function ApiCreateInsight() {
     ApiBearerAuth(),
     ApiOperation({
       summary:
-        'Create a new insight (multipart: text fields + optional icon file)',
+        'Create a new insight (multipart: text fields + optional image file)',
     }),
     ApiConsumes('multipart/form-data'),
     ApiBody({
       description: 'Insight creation payload',
       required: true,
-      schema: INSIGHT_SCHEMA,
+      schema: {
+        ...INSIGHT_SCHEMA,
+        required: ['title', 'description'],
+      },
     }),
   );
 }
@@ -62,7 +68,7 @@ export function ApiUpdateInsight() {
     ApiBearerAuth(),
     ApiOperation({
       summary:
-        'Update an insight (multipart: optional text fields + optional icon file)',
+        'Update an insight (multipart: optional text fields + optional image file)',
     }),
     ApiConsumes('multipart/form-data'),
     ApiBody({

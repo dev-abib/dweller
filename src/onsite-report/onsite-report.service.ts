@@ -18,8 +18,8 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { NumerologyHelpers } from '../auth/helpers/numerology-helpers';
 import { PlaceDetailsHelper } from '../auth/helpers/place-details.helper';
-import { SubmitOnsiteReportDto } from './helpers/dto/submit-report.dto';
-import { CaptureType } from './helpers/dto/add.capture.dto';
+import { SubmitOnsiteReportDto } from './dto/submit-report.dto';
+import { CaptureType } from './dto/add-capture.dto';
 import { CloudinaryService } from '../common/services/cloudinary.service';
 import {
   getAccessLevel,

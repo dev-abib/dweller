@@ -38,7 +38,7 @@ import { CloudinaryService } from '../common/services/cloudinary.service';
 import { EmailService } from '../infra/mail/mail.service';
 import { systemDeleteAccountTemplate } from '../infra/mail/templates/system/delete-account-system-confirmation.template';
 import Stripe from 'stripe';
-import { AdminMailDto } from '../auth/dto/admin.mail.dto';
+import { AdminMailDto } from '../auth/dto/admin-mail.dto';
 import {
   isPrivilegedAdmin,
   ensureSiteOwnerExists,

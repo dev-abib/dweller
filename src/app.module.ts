@@ -1,18 +1,15 @@
-// src/app.module.ts
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
-import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './infra/mail/mail.module';
 import { UserModule } from './user/user.module';
 import { CommonModule } from './common/common.module';
 import { AdminModule } from './admin/admin.module';
-import { SubscriptionService } from './subscription/subscription.service';
-import { SubscriptionController } from './subscription/subscription.controller';
-import { ScheduleModule } from '@nestjs/schedule';
-import { TasksService } from './tasks/tasks.service';
+import { SubscriptionModule } from './subscription/subscription.module';
 import { TasksModule } from './tasks/tasks.module';
 import { DynamicPageModule } from './dynamic-page/dynamic-page.module';
 import { ReportModule } from './report/report.module';
@@ -28,7 +25,6 @@ import { TaskManagerModule } from './task-manager/task-manager.module';
 import { PushModule } from './push/push.module';
 import { NewsletterModule } from './newsletter/newsletter.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -39,6 +35,7 @@ import { NewsletterModule } from './newsletter/newsletter.module';
     MailModule,
     UserModule,
     AdminModule,
+    SubscriptionModule,
     TasksModule,
     DynamicPageModule,
     ReportModule,
@@ -54,11 +51,7 @@ import { NewsletterModule } from './newsletter/newsletter.module';
     PushModule,
     NewsletterModule,
   ],
-  controllers: [AppController, SubscriptionController],
-  providers: [
-    AppService,
-    SubscriptionService,
-    TasksService,
-  ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

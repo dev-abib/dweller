@@ -14,7 +14,7 @@ import { Public } from '../decorators/public.decorator';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
 import { VerifyAccountDto } from '../dto/verify-account.dto';
-import { ResendOtpDto } from '../dto/resend-otp';
+import { ResendOtpDto } from '../dto/resend-otp.dto';
 import { Auth } from '../decorators/auth.decorator';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
@@ -25,7 +25,7 @@ import { UserService } from './user.service';
 import {
   ApiGoogleLogin,
   ApiAppleLogin,
-} from './swagger/auth.swagger';
+} from '../../common/swagger/modules/auth.swagger';
 
 @ApiTags('Auth - User')
 @Controller('auth/user')

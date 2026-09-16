@@ -19,7 +19,7 @@ import { Public } from '../auth/decorators/public.decorator';
 import { DynamicPageService } from './dynamic-page.service';
 import { CreateDynamicPageDto } from './dto/create-dynamic-page.dto';
 import { UpdateDynamicPageDto } from './dto/update-dynamic-page.dto';
-import { GetAllDynamicPagesDto } from './dto/get-all-page.dto';
+import { GetAllDynamicPagesDto } from './dto/get-all-pages.dto';
 
 @ApiTags('Dynamic Pages')
 @Controller('dynamic-page')

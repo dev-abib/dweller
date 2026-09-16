@@ -6,7 +6,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { NumerologyHelpers } from '../auth/helpers/numerology-helpers';
 import { PlaceDetailsHelper } from '../auth/helpers/place-details.helper';
 import { CloudinaryService } from '../common/services/cloudinary.service';
-import { SubmitOnsiteReportDto } from './helpers/dto/submit-report.dto';
+import { SubmitOnsiteReportDto } from './dto/submit-report.dto';
+import { ChatGateway } from '../chat/chat.gateway';
 import type { JwtPayload } from '../auth/types/jwt.types';
 
 describe('OnsiteReportService', () => {
@@ -201,6 +202,13 @@ describe('OnsiteReportService', () => {
                 photos: [{ photo_reference: 'photo1' }],
               },
             ]),
+          },
+        },
+        {
+          provide: ChatGateway,
+          useValue: {
+            server: { to: jest.fn().mockReturnThis(), emit: jest.fn() },
+            sendNotificationToAdmins: jest.fn(),
           },
         },
       ],

@@ -10,7 +10,7 @@ import {
   Max,
 } from 'class-validator';
 import { Transform, plainToInstance } from 'class-transformer';
-import { QuestionAnswerDto } from './qustion-answer.dto';
+import { QuestionAnswerDto } from './question-answer.dto';
 
 export class ElementDto {
   @IsString()

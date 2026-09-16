@@ -1,4 +1,3 @@
-// src/push/push.service.ts
 import { Injectable, Logger } from '@nestjs/common';
 import * as webpush from 'web-push';
 import { PrismaService } from '../prisma/prisma.service';

@@ -26,7 +26,7 @@ import {
   ApiGetMe,
   ApiUpdateUser,
   ApiDeleteUser,
-} from './swagger/user.swagger';
+} from '../common/swagger/modules/user.swagger';
 
 @ApiTags('User')
 @ApiBearerAuth()
@@ -34,7 +34,6 @@ import {
 export class UserController {
   constructor(private readonly user: UserService) {}
 
-  // get me controller
   @Get('get-me')
   @HttpCode(200)
   @Auth('user')
@@ -43,7 +42,6 @@ export class UserController {
     return this.user.getMe(user.id);
   }
 
-  // update user controller
   @Patch('update-user')
   @HttpCode(200)
   @Auth('user')
@@ -67,7 +65,6 @@ export class UserController {
     return this.user.updateUser(dto, user.id, profilePicture);
   }
 
-  // delete user controller
   @Delete('delete-account')
   @HttpCode(204)
   @Auth('user')

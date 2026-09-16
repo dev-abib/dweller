@@ -11,7 +11,8 @@ export function ApiCreateFaq() {
   return applyDecorators(
     ApiBearerAuth(),
     ApiOperation({
-      summary: 'Create a new FAQ (multipart: text fields + required image file)',
+      summary:
+        'Create a new FAQ (multipart: text fields + required image file)',
     }),
     ApiConsumes('multipart/form-data'),
     ApiBody({

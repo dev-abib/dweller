@@ -26,7 +26,7 @@ import {
   ApiGetFaqById,
   ApiUpdateFaq,
   ApiDeleteFaq,
-} from './swagger/faq.swagger';
+} from '../common/swagger/modules/faq.swagger';
 
 @ApiTags('FAQ')
 @Controller('faq')

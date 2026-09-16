@@ -1,4 +1,3 @@
-// src/types/express.d.ts
 import type { JwtPayload } from '../auth/types/jwt.types';
 
 export {};

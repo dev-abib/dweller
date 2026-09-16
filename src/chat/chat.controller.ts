@@ -14,7 +14,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AuthGuard } from '../auth/guards/auth-guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { PrivilegedAdminGuard } from '../auth/guards/privileged-admin.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -39,14 +39,12 @@ export class ChatController {
     private readonly cloudinary: CloudinaryService,
   ) {}
 
-  // ─── Staff list for DM / mentions ─────────────────────────────────────────
   @Get('staff')
   @ApiOperation({ summary: 'Get all staff for DM / mention autocomplete' })
   getStaff(@Request() req: RequestWithUser) {
     return this.chatService.getStaffList(req.user.id);
   }
 
-  // ─── Groups ────────────────────────────────────────────────────────────────
   @Get('groups')
   @ApiOperation({ summary: 'List my chat groups' })
   getGroups(@Request() req: RequestWithUser) {
@@ -120,7 +118,6 @@ export class ChatController {
     return this.chatService.archiveGroup(id, req.user.id);
   }
 
-  // ─── Group messages ────────────────────────────────────────────────────────
   @Get('groups/:id/messages')
   @ApiOperation({ summary: 'Paginated group message history' })
   getGroupMessages(
@@ -131,7 +128,6 @@ export class ChatController {
     return this.chatService.getGroupMessages(id, req.user.id, cursor);
   }
 
-  // ─── DM threads ────────────────────────────────────────────────────────────
   @Get('dms')
   @ApiOperation({ summary: 'List my DM conversations' })
   getDmThreads(@Request() req: RequestWithUser) {
@@ -148,14 +144,12 @@ export class ChatController {
     return this.chatService.getDmMessages(req.user.id, partnerId, cursor);
   }
 
-  // ─── Unread counts ─────────────────────────────────────────────────────────
   @Get('unread')
   @ApiOperation({ summary: 'Unread mention counts' })
   getUnread(@Request() req: RequestWithUser) {
     return this.chatService.getUnreadCounts(req.user.id);
   }
 
-  // ─── Surveillance (super_admin) ────────────────────────────────────────────
   @Get('surveillance')
   @Roles('super_admin')
   @ApiOperation({ summary: 'Super admin: view all messages with filters' })
@@ -197,17 +191,14 @@ export class ChatController {
     return this.chatService.flagMessage(id, req.user.id, body.reason);
   }
 
-  // ─── File upload ───────────────────────────────────────────────────────────
   @Post('upload')
   @ApiOperation({ summary: 'Upload a file attachment for a chat message' })
   @UseInterceptors(
     FileInterceptor('file', {
-      limits: { fileSize: 20 * 1024 * 1024 }, // 20 MB
+      limits: { fileSize: 20 * 1024 * 1024 },
     }),
   )
-  async uploadAttachment(
-    @UploadedFile() file: MulterFile | undefined,
-  ) {
+  async uploadAttachment(@UploadedFile() file: MulterFile | undefined) {
     if (!file) throw new BadRequestException('No file provided');
 
     const result = await this.cloudinary.uploadFile(file, 'chat-attachments');
@@ -232,4 +223,3 @@ export class ChatController {
     };
   }
 }
-

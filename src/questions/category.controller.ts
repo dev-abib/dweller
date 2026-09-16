@@ -26,7 +26,7 @@ import {
   ApiGetCategoryById,
   ApiUpdateCategory,
   ApiDeleteCategory,
-} from './swagger/category.swagger';
+} from '../common/swagger/modules/category.swagger';
 
 @ApiTags('Categories')
 @Controller('categories')

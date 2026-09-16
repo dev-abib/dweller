@@ -6,7 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateDynamicPageDto } from './dto/create-dynamic-page.dto';
 import { UpdateDynamicPageDto } from './dto/update-dynamic-page.dto';
-import { GetAllDynamicPagesDto } from './dto/get-all-page.dto';
+import { GetAllDynamicPagesDto } from './dto/get-all-pages.dto';
 
 @Injectable()
 export class DynamicPageService {

@@ -1,10 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import {
-  ApiOperation,
-  ApiConsumes,
-  ApiBody,
-  ApiParam,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
 
 export function ApiSubmitOnsiteReport() {
   return applyDecorators(

@@ -2,9 +2,7 @@ import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
 
 export function ApiGetMe() {
-  return applyDecorators(
-    ApiOperation({ summary: 'Get current user profile' }),
-  );
+  return applyDecorators(ApiOperation({ summary: 'Get current user profile' }));
 }
 
 export function ApiUpdateUser() {
@@ -46,7 +44,5 @@ export function ApiUpdateUser() {
 }
 
 export function ApiDeleteUser() {
-  return applyDecorators(
-    ApiOperation({ summary: 'Delete user account' }),
-  );
+  return applyDecorators(ApiOperation({ summary: 'Delete user account' }));
 }

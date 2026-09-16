@@ -26,7 +26,7 @@ import {
   ApiGetInsightById,
   ApiUpdateInsight,
   ApiDeleteInsight,
-} from './swagger/insight.swagger';
+} from '../common/swagger/modules/insight.swagger';
 
 @ApiTags('Insight')
 @Controller('insight')

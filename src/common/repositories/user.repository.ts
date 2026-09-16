@@ -1,4 +1,3 @@
-// src/common/repositories/user.repository.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { User } from '@prisma/client';

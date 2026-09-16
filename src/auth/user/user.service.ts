@@ -15,7 +15,7 @@ import { LoginDto } from '../dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../types/jwt.types';
 import { VerifyAccountDto } from '../dto/verify-account.dto';
-import { ResendOtpDto } from '../dto/resend-otp';
+import { ResendOtpDto } from '../dto/resend-otp.dto';
 import { accountVerificationConfirmationTemplate } from '../../infra/mail/templates/system/account-verification-confirmation.template';
 import { resetPasswordTemplate } from '../../infra/mail/templates/auth/reset-password.template';
 import { ResetPasswordDto } from '../dto/reset-password.dto';
@@ -23,10 +23,10 @@ import { resetPasswordConfirmationTemplate } from '../../infra/mail/templates/au
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { changePasswordConfirmationTemplate } from '../../infra/mail/templates/auth/change-password-confirmation.template';
 import crypto from 'crypto';
-import { GoogleUserInfo } from '../types/google-paylod';
+import { GoogleUserInfo } from '../types/google-payload.types';
 import axios from 'axios';
 import appleSignin from 'apple-signin-auth';
-import { AppleUserInfo } from '../types/apple-user-info';
+import { AppleUserInfo } from '../types/apple-user-info.types';
 import { UserRepository } from '../../common/repositories/user.repository';
 import { AuthHelper } from '../helpers/auth.helper';
 

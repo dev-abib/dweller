@@ -1,11 +1,10 @@
-// src/common/common.module.ts
 import { Module, Global } from '@nestjs/common';
 import { UserRepository } from './repositories/user.repository';
-import { PrismaService } from '../prisma/prisma.service';
+import { CloudinaryService } from './services/cloudinary.service';
 
 @Global()
 @Module({
-  providers: [UserRepository, PrismaService],
-  exports: [UserRepository],
+  providers: [UserRepository, CloudinaryService],
+  exports: [UserRepository, CloudinaryService],
 })
 export class CommonModule {}

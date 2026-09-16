@@ -1,4 +1,3 @@
-// src/common/helpers/ip.helper.ts
 import type { Request } from 'express';
 
 function cleanIp(ip: string): string {
